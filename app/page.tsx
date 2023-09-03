@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, MouseEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import "tailwindcss/tailwind.css";
 
@@ -17,6 +17,9 @@ let noneTables: number[] = [];
 let blacklistsTable: number[] = []
 let tableList: HTMLElement[] = [];
 let numlist: number[] = [];
+
+let remake = false;
+
 for (let i = 1; i <= 25; i++) {
   numlist.push(i);
 }
@@ -24,21 +27,36 @@ let isRunning = false;
 
 let max = 25;
 
-let plingSound = new Audio("./pling.mp3");
+// let plingSound = new Audio("./pling.mp3");
+// let finalSound = new Audio("./tada.mp3");
+
 
 export default function Main() {
   let [seatAmount, setAmount] = useState(25);
+  let [plingSound, setPling] = useState<HTMLAudioElement>();
+  let [finalSound, setFinal] = useState<HTMLAudioElement>();
+
+
+
+  useEffect(() => {
+    setPling(new Audio("./pling.mp3"));
+  }, []);
+  useEffect(() => {
+    setFinal(new Audio("./tada.mp3"));
+  }, []);
 
   return (
     <div className='pointer-events-auto h-screen'>
       <nav className='border-box border-2 bg-brown text-2xl w-screen h-10 text-start border-brown fixed'>
-        자리추첨 <b><span className='text-[#f5d442]'>{seatAmount}자리</span></b> - 살레시오중학교
+        자리추첨 <b><span className='text-[#f5d442]'>{seatAmount}자리</span></b>
       </nav>
       <br /><br />
       <div >
         <span className='ml-3'>열 : </span><input type="number" id='가로' placeholder='가로' className='rounded-lg border-2 outline-none border-thickbrown text-center mx-3 text-black ' min={1} max={10} defaultValue={5} onChange={(event: ChangeEvent<HTMLInputElement>) => {
           if (+event.target.value > 10) {
             event.target.value = "10"
+          } else if (+event.target.value <= 0) {
+            event.target.value = "1";
           }
           width = +event.target.value;
           numlist = [];
@@ -48,10 +66,12 @@ export default function Main() {
           max = width * length;
           (document.getElementById("max")!! as HTMLInputElement).value = (width * length).toString();
           setAmount((width * length));
-        }}/>
-        행 : <input type="number" id='세로' placeholder='세로' className='rounded-lg border-2 outline-none border-thickbrown mx-2 text-center text-black' min={1} max={10} defaultValue={5} onChange={(event: ChangeEvent<HTMLInputElement>) => {
+        }}/><br className='xl:hidden 2xl:hidden'/>
+        <span className='ml-3 mr-1'>행 : </span><input type="number" id='세로' placeholder='세로' className='rounded-lg border-2 outline-none border-thickbrown mx-2 text-center text-black' min={1} max={10} defaultValue={5} onChange={(event: ChangeEvent<HTMLInputElement>) => {
           if (+event.target.value > 10) {
             event.target.value = "10"
+          } else if (+event.target.value <= 0) {
+            event.target.value = "1";
           }
           length = +event.target.value
           numlist = [];
@@ -97,8 +117,41 @@ export default function Main() {
           }}/><br className='xl:hidden 2xl:hidden'/> <input id="blacklist" type='text' className='rounded-lg border-2 outline-none border-thickbrown text-center mx-3 text-black my-2'  placeholder={"사방신(쉼표 구분)"} onChange={(event: ChangeEvent<HTMLInputElement>) => {
             blacklistInputStr = event.target.value
           }}/> <br className='xl:hidden 2xl:hidden'/><br className='xl:hidden 2xl:hidden'/>
-        <button className='rounded-lg border-4 border-brown bg-brown hover:bg-justbrown hover:border-justbrown transition-colors mx-3' onClick={
+        <button className='rounded-lg border-4 border-brown bg-brown hover:bg-justbrown hover:border-justbrown transition-colors mx-3' id="create" onClick={
             (event) => {
+              if (remake) {
+                console.log(blacklists)
+                noneTables = [];
+                blacklistsTable = [];
+                document.getElementById("run")!!.innerText = "▶추첨";
+                document.getElementById("run")!!.style.background = "";
+                document.getElementById("run")!!.style.borderColor = "";
+                document.getElementById("run")!!.style.display = "none";
+                for (const element of tableList) {
+                  document.getElementById("table")?.removeChild(element);
+                }                
+                tableList = [];
+                (document.getElementById("가로") as HTMLInputElement).disabled = false;
+                (document.getElementById("가로") as HTMLInputElement).style.borderColor = "";
+                (document.getElementById("세로") as HTMLInputElement).disabled = false;
+                (document.getElementById("세로") as HTMLInputElement).style.borderColor = "";
+                (document.getElementById("change")!! as HTMLButtonElement).disabled = false;
+                document.getElementById("change")!!.style.background = "";
+                document.getElementById("change")!!.style.borderColor = "";
+                (document.getElementById("numberorname")!! as HTMLInputElement).disabled = false;
+                document.getElementById("numberorname")!!.style.borderColor = "";
+                (document.getElementById("blacklist")!! as HTMLInputElement).disabled = false;
+                document.getElementById("blacklist")!!.style.borderColor = "";
+                (document.getElementById("max")!! as HTMLInputElement).disabled = false;
+                document.getElementById("max")!!.style.borderColor = "";
+                (event.target as HTMLButtonElement).disabled = false;
+                (event.target as HTMLButtonElement).style.background = "";
+                (event.target as HTMLButtonElement).style.borderColor = "";
+                (event.target as HTMLButtonElement).innerText = "생성";
+                remake = false;
+                return;
+              }
+
               if (isNumber) {
                 let nonList = none.split(',');
                 let blacklist = blacklistInputStr.split(',');
@@ -123,11 +176,11 @@ export default function Main() {
                     alert("사방신의 번호는 없는 번호입니다");
                     return;
                   }
-
+                  
                   disable(event);
                   for (let i = 0; i < width*length; i++) {
                     const tableElement = document.createElement("div");
-                    tableElement.className = "rounded-lg inline-block p-0 my-[5px] bg-thickbrown border-thickbrown text-center text-2xl h-[75px] mx-[3px] float-left leading-[70px] shadow-md transition-colors";
+                    tableElement.className = "text-3 mobile:text-[14px] rounded-lg inline-block p-0 my-[5px] bg-thickbrown border-thickbrown text-center text-2xl h-[75px] mx-[3px] float-left leading-[70px] shadow-md transition-colors";
                     tableElement.id = `table{${i}}`;
                     tableElement.onclick = (event) => {
                       if (isRunning) return
@@ -136,7 +189,7 @@ export default function Main() {
                           return
                         } 
                         if (blacklistsTable.includes(i)) {
-                          blacklistsTable.splice(noneTables.findIndex((x) => x == i), 1);
+                          blacklistsTable.splice(blacklistsTable.findIndex((x) => x == i), 1);
                           (event.target as HTMLDivElement).style.background = "#cc6f18";
                           (event.target as HTMLDivElement).style.borderColor = "#cc6f18";
                           (event.target as HTMLDivElement).style.color = "black";
@@ -169,10 +222,10 @@ export default function Main() {
                     document.getElementById("table")!!.appendChild(tableElement);   
                   } 
                   if (none.length != 0) {
-                    nonelist.push(...nonList.map((str: string) => Number(str)));
+                    nonelist = nonList.map((str: string) => Number(str));
                   }
                   if (blacklistInputStr.length != 0) {
-                    blacklists.push(...blacklist.map((str: string) => Number(str)));
+                    blacklists = blacklist.map((str: string) => Number(str));
                   }
                   document.getElementById("run")!!.style.display = "inline";
                   
@@ -180,19 +233,18 @@ export default function Main() {
                   alert("숫자를 입력해주세요");
                 }
               } else {
-                
                 if (names.length == 0) {
                   alert("이름을 입력해주세요");
                   return
                 }
                 nameList = names.split(',');
-                if (blacklistInputStr.length != 0) {
-                  if (blacklistInputStr.split(',').filter((str: string) => { return !nameList.includes(str) }).length == 0) {
-                    blacklistName = blacklistInputStr.split(',');
-                  } else {
-                    alert("사방신의 이름이 이름 입력칸에 포함되지 않았습니다");
-                  }                  
-                }
+                if (blacklistInputStr.length == 0 || blacklistInputStr.split(',').filter((str: string) => { return !nameList.includes(str) }).length == 0) {
+                  blacklistName = blacklistInputStr.split(',');
+                } else {
+                  alert("사방신의 이름이 이름 입력칸에 포함되지 않았습니다");
+                  return;
+                }                  
+                
                 disable(event);
                 for (let i = 0; i < width*length; i++) {
                     const tableElement = document.createElement("div");
@@ -205,7 +257,7 @@ export default function Main() {
                           return
                         } 
                         if (blacklistsTable.includes(i)) {
-                          blacklistsTable.splice(noneTables.findIndex((x) => x == i), 1);
+                          blacklistsTable.splice(blacklistsTable.findIndex((x) => x == i), 1);
                           (event.target as HTMLDivElement).style.background = "#cc6f18";
                           (event.target as HTMLDivElement).style.borderColor = "#cc6f18";
                           (event.target as HTMLDivElement).style.color = "black";
@@ -228,19 +280,18 @@ export default function Main() {
                           noneTables.push(i);
                           (event.target as HTMLDivElement).style.opacity = "0.2";
                           setAmount(prev => prev - 1);
-                          
                         } 
                       }
                     }
                     tableList.push(tableElement);
                     document.getElementById("table")!!.appendChild(tableElement);   
                 }
-                blacklistName = blacklistInputStr.split(',');
+                blacklistName = blacklistInputStr.length == 0 ? [] : blacklistInputStr.split(',');
+                document.getElementById("run")!!.style.display = "inline";
             }
           }
           }>생성</button>
           <button id="run" className='hidden rounded-lg border-4 border-[#7cc900] bg-[#7cc900] hover:bg-[#28e602] hover:border-[#28e602] transition-colors mx-3' onClick={(event)=>{
-            plingSound.play();
             if (isNumber) {
               if (blacklists.length != blacklistsTable.length) {
                 alert("사방신의 수와 사방신의 자리의 수가 같지 않습니다");
@@ -251,6 +302,10 @@ export default function Main() {
                 button.disabled = true;
                 button.style.borderColor = "gray";
                 button.style.background = "gray";
+                const create = document.getElementById("create") as HTMLButtonElement;
+                create.disabled = true;
+                create.style.borderColor = "gray";
+                create.style.background = "gray";
                 isRunning = true;
                 tableList.forEach((x) => { x.innerText = "" })
                 let _numlist: number[] = numlist.filter((x) => { return !nonelist.includes(x) });
@@ -262,9 +317,9 @@ export default function Main() {
                 shuffle(tbl)
                 shuffle(_bl)
                 shuffle(_tl)
-                
                 const shuffling = setInterval(() => {                  
-                    if (_numlist.length != count) {
+                  if (_numlist.length != count) {
+                    plingSound!!.play();
                     if (_bl.includes(_numlist[count])) {
                       tbl.pop()!!.innerText = `${_numlist[count]}번`;
                       _numlist.splice(count, 1);
@@ -274,21 +329,68 @@ export default function Main() {
                     }
                   } else {
                     clearInterval(shuffling);
+                    finalSound!!.play()
                     isRunning = false;
                     button.disabled = false;
                     button.innerText = "↻재추첨";
                     button.style.borderColor = "red";
                     button.style.background = "red";
+                    
+                    create.disabled = false;
+                    create.innerText = "↻다시 제작";
+                    create.style.borderColor = "red";
+                    create.style.background = "red";
+                    remake = true;
                   }
-                }, 350);                
+                }, 600);                
               }
-            } else {
+            } else {              
               if (width * length - noneTables.length != nameList.length) {
                 alert("없는 자리의 수와 이름의 수가 같지 않습니다");
               } else if (blacklistName.length != blacklistsTable.length) {
-                alert("사방신의 수와 이름의 수가 같지 않습니다");
+                alert("사방신의 자리의 수와 이름의 수가 같지 않습니다");
               } else {
+                const button = (event.target as HTMLButtonElement);
+                button.disabled = true;
+                button.style.borderColor = "gray";
+                button.style.background = "gray";
+                isRunning = true;
+                tableList.forEach((x) => { x.innerText = "" })
+                let _nameList: string[] = [...nameList];
+                shuffle(_nameList);
+                let count = 0;
+                let _tl = tableList.filter((element) => { return !(element.style.opacity == "0.2" || element.style.background == "black") })
+                let _bl = [...blacklistName];
+                let tbl = tableList.filter((element) => { return (element.style.background == "black") })
+                shuffle(tbl)
+                shuffle(_bl)
+                shuffle(_tl)
+
+                console.log(_bl)
                 
+                const shuffling = setInterval(() => {                  
+                  if (_nameList.length != count) {
+                    plingSound!!.play();
+                    if (_bl.includes(_nameList[count])) {
+                      console.log("asdf")
+                      tbl.pop()!!.innerText = _nameList[count];
+                      _nameList.splice(count, 1);
+                    } else {
+                      _tl[count].innerText = _nameList[count];
+                      count++;
+                    }
+                  } else {
+                    clearInterval(shuffling);
+                    finalSound!!.play()
+                    isRunning = false;
+                    button.disabled = false;
+                    button.innerText = "↻재추첨";
+                    button.style.borderColor = "red";
+                    button.style.background = "red";
+                    remake = true;
+                    
+                  }
+                }, 600);                      
               }
             }
           }}>▶추첨</button>
@@ -298,9 +400,10 @@ export default function Main() {
       <div className=''>
         <div className='border-box border-2 w-1/3 h-16 my-4 mx-auto text-center bg-justbrown border-justbrown text-2xl leading-[60px] shadow-md'>교탁</div>
         <br /><br /><br />
-            <div className='hidden' id='table'> 
-            </div>
-      </div>        
+            <div className='hidden' id='table'></div>
+      </div>
+      <hr className='h-10 mt-[100px] '/>
+      <p className='text-center'>버그 및 개선사항 : khan_0304@naver.com<br />참고한 사이트 : <b><u><a className='text-[#809fad]' href='https://seatpicker.netlify.app/'>무작위 자리 뽑기</a></u></b></p>
     </div>  
   )
 }

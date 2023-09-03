@@ -2,8 +2,8 @@ import { Inter, Noto_Sans_KR, Roboto } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: '자리 추첨 프로그램',
-  description: '개발 : SICC',
+  title: '자리 추첨 웹사이트',
+  description: '자리 추첨은 여기에서',
 }
 const notoSansKr = Noto_Sans_KR({
   subsets: ["latin"], 

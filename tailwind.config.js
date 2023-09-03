@@ -21,6 +21,9 @@ module.exports = {
       "thickbrown" : '#cc6f18',
       "lightbrown" : '#ecdeb8',
       "justbrown" : '#db972a'
+    },
+    screens: {
+      "mobile" : '250px'
     }
   },
   plugins: [],
