@@ -1,7 +1,6 @@
 'use client';
 
 import { ChangeEvent, MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
-import tw from 'tailwind-styled-components';
 import "tailwindcss/tailwind.css";
 
 let width:number = 5, length:number = 5;
