@@ -353,6 +353,10 @@ export default function Main() {
                 button.disabled = true;
                 button.style.borderColor = "gray";
                 button.style.background = "gray";
+                const create = document.getElementById("create") as HTMLButtonElement;
+                create.disabled = true;
+                create.style.borderColor = "gray";
+                create.style.background = "gray";
                 isRunning = true;
                 tableList.forEach((x) => { x.innerText = "" })
                 let _nameList: string[] = [...nameList];
@@ -364,14 +368,11 @@ export default function Main() {
                 shuffle(tbl)
                 shuffle(_bl)
                 shuffle(_tl)
-
-                console.log(_bl)
                 
                 const shuffling = setInterval(() => {                  
                   if (_nameList.length != count) {
                     plingSound!!.play();
                     if (_bl.includes(_nameList[count])) {
-                      console.log("asdf")
                       tbl.pop()!!.innerText = _nameList[count];
                       _nameList.splice(count, 1);
                     } else {
@@ -386,6 +387,11 @@ export default function Main() {
                     button.innerText = "↻재추첨";
                     button.style.borderColor = "red";
                     button.style.background = "red";
+                    create.disabled = false;
+                    create.innerText = "↻다시 제작";
+                    create.style.borderColor = "red";
+                    create.style.background = "red";
+                    remake = true;
                     remake = true;
                     
                   }
