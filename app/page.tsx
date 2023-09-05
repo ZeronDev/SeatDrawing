@@ -35,8 +35,6 @@ export default function Main() {
   let [plingSound, setPling] = useState<HTMLAudioElement>();
   let [finalSound, setFinal] = useState<HTMLAudioElement>();
 
-
-
   useEffect(() => {
     setPling(new Audio("./pling.mp3"));
   }, []);
@@ -51,7 +49,7 @@ export default function Main() {
       </nav>
       <br /><br />
       <div >
-        <span className='ml-3'>열 : </span><input type="number" id='가로' placeholder='가로' className='rounded-lg border-2 outline-none border-thickbrown text-center mx-3 text-black ' min={1} max={10} defaultValue={5} onChange={(event: ChangeEvent<HTMLInputElement>) => {
+        <span className='ml-3'>열 : </span><input type="number" id='가로' placeholder='가로' className='rounded-lg border-2 w-[30px outline-none border-thickbrown text-center mx-3 text-black ' min={1} max={10} defaultValue={5} onChange={(event: ChangeEvent<HTMLInputElement>) => {
           if (+event.target.value > 10) {
             event.target.value = "10"
           } else if (+event.target.value <= 0) {
@@ -66,7 +64,7 @@ export default function Main() {
           (document.getElementById("max")!! as HTMLInputElement).value = (width * length).toString();
           setAmount((width * length));
         }}/><br className='xl:hidden 2xl:hidden'/>
-        <span className='ml-3 mr-1'>행 : </span><input type="number" id='세로' placeholder='세로' className='rounded-lg border-2 outline-none border-thickbrown mx-2 text-center text-black' min={1} max={10} defaultValue={5} onChange={(event: ChangeEvent<HTMLInputElement>) => {
+        <span className='ml-3 mr-1'>행 : </span><input type="number" id='세로' placeholder='세로' className='rounded-lg border-2 outline-none w-30 border-thickbrown mx-2 text-center text-black' min={1} max={10} defaultValue={5} onChange={(event: ChangeEvent<HTMLInputElement>) => {
           if (+event.target.value > 10) {
             event.target.value = "10"
           } else if (+event.target.value <= 0) {
@@ -102,7 +100,10 @@ export default function Main() {
           <input id="max" type="number" className='rounded-lg border-2 outline-none border-thickbrown text-center mx-3 text-black w-[120px]' min={1} max={100} defaultValue={25} placeholder="마지막 번호" onChange={(event: ChangeEvent<HTMLInputElement>) => {
             if (+event.target.value > 100) {
               event.target.value = "100";
-            }            
+            } else if (+event.target.value < 1) {
+              event.target.value = "1";
+            }
+      
             max = +event.target.value;
             numlist = [];
             for (let i = 1; i <= (+event.target.value); i++) {
