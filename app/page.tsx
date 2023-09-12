@@ -49,7 +49,7 @@ export default function Main() {
       </nav>
       <br /><br />
       <div >
-        <span className='ml-3'>열 : </span><input type="number" id='가로' placeholder='가로' className='rounded-lg border-2 w-[30px outline-none border-thickbrown text-center mx-3 text-black ' min={1} max={10} defaultValue={5} onChange={(event: ChangeEvent<HTMLInputElement>) => {
+        <span className='ml-3'>열 : </span><input type="number" id='가로' placeholder='가로' className='rounded-lg border-2 w-[45px] outline-none border-thickbrown text-center mx-3 text-black ' min={1} max={10} defaultValue={5} onChange={(event: ChangeEvent<HTMLInputElement>) => {
           if (+event.target.value > 10) {
             event.target.value = "10"
           } else if (+event.target.value <= 0) {
@@ -64,7 +64,7 @@ export default function Main() {
           (document.getElementById("max")!! as HTMLInputElement).value = (width * length).toString();
           setAmount((width * length));
         }}/><br className='xl:hidden 2xl:hidden'/>
-        <span className='ml-3 mr-1'>행 : </span><input type="number" id='세로' placeholder='세로' className='rounded-lg border-2 outline-none w-30 border-thickbrown mx-2 text-center text-black' min={1} max={10} defaultValue={5} onChange={(event: ChangeEvent<HTMLInputElement>) => {
+        <span className='ml-3 mr-1'>행 : </span><input type="number" id='세로' placeholder='세로' className='rounded-lg border-2 outline-none w-[45px] border-thickbrown mx-2 text-center text-black' min={1} max={10} defaultValue={5} onChange={(event: ChangeEvent<HTMLInputElement>) => {
           if (+event.target.value > 10) {
             event.target.value = "10"
           } else if (+event.target.value <= 0) {
