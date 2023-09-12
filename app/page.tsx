@@ -180,7 +180,7 @@ export default function Main() {
                   disable(event);
                   for (let i = 0; i < width*length; i++) {
                     const tableElement = document.createElement("div");
-                    tableElement.className = "text-3 sm:text-[14px] rounded-lg inline-block p-0 my-[5px] bg-thickbrown border-thickbrown text-center text-2xl h-[75px] mx-[3px] float-left leading-[70px] shadow-md transition-colors";
+                    tableElement.className = "text-3 text-[16px] 2xl:text-[1.5rem] xl:text-[1.5rem] rounded-lg inline-block p-0 my-[5px] bg-thickbrown border-thickbrown text-center text-2xl h-[75px] mx-[3px] float-left leading-[70px] shadow-md transition-colors";
                     tableElement.id = `table{${i}}`;
                     tableElement.onclick = (event) => {
                       if (isRunning) return
@@ -248,7 +248,7 @@ export default function Main() {
                 disable(event);
                 for (let i = 0; i < width*length; i++) {
                     const tableElement = document.createElement("div");
-                    tableElement.className = "rounded-lg inline-block p-0 my-[5px] bg-thickbrown border-thickbrown text-center text-2xl h-[75px] mx-[3px] float-left leading-[70px] shadow-md transition-colors";
+                    tableElement.className = "rounded-lg text-[16px] 2xl:text-[1.5rem] xl:text-[1.5rem] inline-block p-0 my-[5px] bg-thickbrown border-thickbrown text-center text-2xl h-[75px] mx-[3px] float-left leading-[70px] shadow-md transition-colors";
                     tableElement.id = `table{${i}}`;
                     tableElement.onclick = (event) => {
                       if (isRunning) return
